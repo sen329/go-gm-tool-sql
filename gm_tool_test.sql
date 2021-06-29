@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 22, 2021 at 09:50 AM
+-- Generation Time: Jun 29, 2021 at 06:29 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 8.0.3
 
@@ -44,6 +44,7 @@ CREATE TABLE `permissions` (
 
 INSERT INTO `permissions` (`id`, `permission_name`, `description`, `active`, `created_at`, `updated_at`) VALUES
 (1, 'modify_user', 'Create, edit, delete users', 1, '2021-05-19 07:13:46', '2021-05-19 07:13:46'),
+(2, 'shop_control', 'Create, edit, delete shop data', 1, '2021-06-24 07:53:16', '2021-06-24 07:53:16'),
 (4, 'send_mail', 'Send mail', 1, '2021-05-20 10:05:16', '2021-05-20 10:05:16');
 
 -- --------------------------------------------------------
@@ -90,7 +91,99 @@ CREATE TABLE `roles_permissions` (
 INSERT INTO `roles_permissions` (`id`, `role_id`, `permission_id`, `created_at`) VALUES
 (1, 1, 1, '2021-05-20 11:28:40'),
 (4, 1, 4, '2021-06-09 09:38:39'),
-(5, 1, 4, '2021-06-16 09:47:18');
+(6, 1, 2, '2021-06-24 07:59:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_box`
+--
+
+CREATE TABLE `t_box` (
+  `box_id` int(11) NOT NULL,
+  `box_name` varchar(255) NOT NULL,
+  `rand_value` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_box_loot_table`
+--
+
+CREATE TABLE `t_box_loot_table` (
+  `uid` int(11) NOT NULL,
+  `box_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `item_type` int(11) NOT NULL,
+  `amount` int(11) NOT NULL DEFAULT 1,
+  `chance` int(11) NOT NULL,
+  `min` int(11) NOT NULL,
+  `max` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_chest`
+--
+
+CREATE TABLE `t_chest` (
+  `duration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_chest`
+--
+
+INSERT INTO `t_chest` (`duration`) VALUES
+(3),
+(6),
+(12);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_currency_type`
+--
+
+CREATE TABLE `t_currency_type` (
+  `currency_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_currency_type`
+--
+
+INSERT INTO `t_currency_type` (`currency_id`, `name`) VALUES
+(1, 'Ori'),
+(2, 'Citrine'),
+(3, 'Lotus');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_energy`
+--
+
+CREATE TABLE `t_energy` (
+  `energy_id` int(11) NOT NULL,
+  `description` tinytext NOT NULL,
+  `target` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_energy`
+--
+
+INSERT INTO `t_energy` (`energy_id`, `description`, `target`) VALUES
+(1, '10 Energy', 10),
+(2, '35 Energy', 35),
+(4, '50 Energy', 50),
+(8, '75 Energy', 75),
+(16, '225 Energy', 225),
+(32, '500 Energy', 500);
 
 -- --------------------------------------------------------
 
@@ -148,12 +241,120 @@ CREATE TABLE `t_gacha_loot_table` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `t_icon_avatar`
+--
+
+CREATE TABLE `t_icon_avatar` (
+  `avatar_id` int(11) NOT NULL,
+  `description` tinytext NOT NULL,
+  `release_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_icon_frame`
+--
+
+CREATE TABLE `t_icon_frame` (
+  `frame_id` int(11) NOT NULL,
+  `description` tinytext NOT NULL,
+  `release_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `t_item_type`
 --
 
 CREATE TABLE `t_item_type` (
   `item_type_id` int(11) NOT NULL,
   `item_type_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_item_type`
+--
+
+INSERT INTO `t_item_type` (`item_type_id`, `item_type_name`) VALUES
+(1, 'currency'),
+(2, 'ksatriya'),
+(3, 'Skin'),
+(4, 'Rune'),
+(5, 'Item'),
+(6, 'Box'),
+(7, 'Chest'),
+(8, 'Energy'),
+(9, 'Skin Part'),
+(10, 'Premium'),
+(11, 'Frame'),
+(12, 'Avatar'),
+(13, 'Vikara'),
+(14, 'Vahana'),
+(15, 'Ksatriya Fragment'),
+(16, 'Skin Fragment');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_ksatriya`
+--
+
+CREATE TABLE `t_ksatriya` (
+  `ksatriya_id` smallint(6) NOT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  `release_date` timestamp NULL DEFAULT current_timestamp(),
+  `ksatriya_name` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_ksatriya_fragment`
+--
+
+CREATE TABLE `t_ksatriya_fragment` (
+  `ksatriya_id` smallint(6) NOT NULL,
+  `amount_needed` int(11) NOT NULL,
+  `sell_currency_id` int(11) NOT NULL,
+  `sell_value` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_ksatriya_skin`
+--
+
+CREATE TABLE `t_ksatriya_skin` (
+  `ksatriya_skin_id` int(11) NOT NULL,
+  `ksatriya_id` smallint(6) NOT NULL,
+  `release_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_ksatriya_skin_fragment`
+--
+
+CREATE TABLE `t_ksatriya_skin_fragment` (
+  `ksatriya_skin_id` int(11) NOT NULL,
+  `amount_needed` int(11) NOT NULL,
+  `sell_currency_id` int(11) NOT NULL,
+  `sell_value` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_ksatriya_skin_part`
+--
+
+CREATE TABLE `t_ksatriya_skin_part` (
+  `skin_part_id` int(11) NOT NULL,
+  `release_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -279,6 +480,39 @@ CREATE TABLE `t_mail_template` (
   `template_id` int(11) NOT NULL,
   `subject` tinytext NOT NULL,
   `message` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `t_mail_template`
+--
+
+INSERT INTO `t_mail_template` (`template_id`, `subject`, `message`) VALUES
+(1, 'test subject', 'this is a test message'),
+(3, 'test subject no 32', 'this is a test message 32'),
+(4, 'test subject no 3', 'this is a test message 3');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_premium`
+--
+
+CREATE TABLE `t_premium` (
+  `item_id` int(11) NOT NULL,
+  `duration` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `t_rune`
+--
+
+CREATE TABLE `t_rune` (
+  `rune_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL DEFAULT 'Default',
+  `rune_color` enum('Red','Blue','Green','Yellow','White') NOT NULL DEFAULT 'Red'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -418,6 +652,38 @@ ALTER TABLE `roles_permissions`
   ADD KEY `permission_id` (`permission_id`);
 
 --
+-- Indexes for table `t_box`
+--
+ALTER TABLE `t_box`
+  ADD PRIMARY KEY (`box_id`);
+
+--
+-- Indexes for table `t_box_loot_table`
+--
+ALTER TABLE `t_box_loot_table`
+  ADD PRIMARY KEY (`uid`),
+  ADD KEY `box_id` (`box_id`),
+  ADD KEY `item_type` (`item_type`);
+
+--
+-- Indexes for table `t_chest`
+--
+ALTER TABLE `t_chest`
+  ADD PRIMARY KEY (`duration`);
+
+--
+-- Indexes for table `t_currency_type`
+--
+ALTER TABLE `t_currency_type`
+  ADD PRIMARY KEY (`currency_id`);
+
+--
+-- Indexes for table `t_energy`
+--
+ALTER TABLE `t_energy`
+  ADD PRIMARY KEY (`energy_id`);
+
+--
 -- Indexes for table `t_gacha`
 --
 ALTER TABLE `t_gacha`
@@ -446,10 +712,53 @@ ALTER TABLE `t_gacha_loot_table`
   ADD KEY `gacha_item_id` (`gacha_item_id`);
 
 --
+-- Indexes for table `t_icon_avatar`
+--
+ALTER TABLE `t_icon_avatar`
+  ADD PRIMARY KEY (`avatar_id`);
+
+--
+-- Indexes for table `t_icon_frame`
+--
+ALTER TABLE `t_icon_frame`
+  ADD PRIMARY KEY (`frame_id`);
+
+--
 -- Indexes for table `t_item_type`
 --
 ALTER TABLE `t_item_type`
   ADD PRIMARY KEY (`item_type_id`);
+
+--
+-- Indexes for table `t_ksatriya`
+--
+ALTER TABLE `t_ksatriya`
+  ADD PRIMARY KEY (`ksatriya_id`);
+
+--
+-- Indexes for table `t_ksatriya_fragment`
+--
+ALTER TABLE `t_ksatriya_fragment`
+  ADD PRIMARY KEY (`ksatriya_id`);
+
+--
+-- Indexes for table `t_ksatriya_skin`
+--
+ALTER TABLE `t_ksatriya_skin`
+  ADD PRIMARY KEY (`ksatriya_skin_id`),
+  ADD KEY `ksatriya_id` (`ksatriya_id`);
+
+--
+-- Indexes for table `t_ksatriya_skin_fragment`
+--
+ALTER TABLE `t_ksatriya_skin_fragment`
+  ADD PRIMARY KEY (`ksatriya_skin_id`);
+
+--
+-- Indexes for table `t_ksatriya_skin_part`
+--
+ALTER TABLE `t_ksatriya_skin_part`
+  ADD PRIMARY KEY (`skin_part_id`);
 
 --
 -- Indexes for table `t_lotto`
@@ -516,6 +825,18 @@ ALTER TABLE `t_mail_template`
   ADD PRIMARY KEY (`template_id`);
 
 --
+-- Indexes for table `t_premium`
+--
+ALTER TABLE `t_premium`
+  ADD PRIMARY KEY (`item_id`);
+
+--
+-- Indexes for table `t_rune`
+--
+ALTER TABLE `t_rune`
+  ADD PRIMARY KEY (`rune_id`);
+
+--
 -- Indexes for table `t_shop`
 --
 ALTER TABLE `t_shop`
@@ -571,7 +892,7 @@ ALTER TABLE `users_roles`
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -583,7 +904,25 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `roles_permissions`
 --
 ALTER TABLE `roles_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `t_box`
+--
+ALTER TABLE `t_box`
+  MODIFY `box_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `t_box_loot_table`
+--
+ALTER TABLE `t_box_loot_table`
+  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `t_currency_type`
+--
+ALTER TABLE `t_currency_type`
+  MODIFY `currency_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `t_gacha`
@@ -607,7 +946,19 @@ ALTER TABLE `t_gacha_item`
 -- AUTO_INCREMENT for table `t_item_type`
 --
 ALTER TABLE `t_item_type`
-  MODIFY `item_type_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `item_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `t_ksatriya`
+--
+ALTER TABLE `t_ksatriya`
+  MODIFY `ksatriya_id` smallint(6) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `t_ksatriya_skin`
+--
+ALTER TABLE `t_ksatriya_skin`
+  MODIFY `ksatriya_skin_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `t_lotto`
@@ -655,7 +1006,19 @@ ALTER TABLE `t_mail_custom_message`
 -- AUTO_INCREMENT for table `t_mail_template`
 --
 ALTER TABLE `t_mail_template`
-  MODIFY `template_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `template_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `t_premium`
+--
+ALTER TABLE `t_premium`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `t_rune`
+--
+ALTER TABLE `t_rune`
+  MODIFY `rune_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `t_shop`
@@ -699,6 +1062,13 @@ ALTER TABLE `roles_permissions`
   ADD CONSTRAINT `roles_permissions_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`);
 
 --
+-- Constraints for table `t_box_loot_table`
+--
+ALTER TABLE `t_box_loot_table`
+  ADD CONSTRAINT `t_box_loot_table_ibfk_1` FOREIGN KEY (`box_id`) REFERENCES `t_box` (`box_id`),
+  ADD CONSTRAINT `t_box_loot_table_ibfk_2` FOREIGN KEY (`item_type`) REFERENCES `t_item_type` (`item_type_id`);
+
+--
 -- Constraints for table `t_gacha_feature`
 --
 ALTER TABLE `t_gacha_feature`
@@ -717,6 +1087,24 @@ ALTER TABLE `t_gacha_item`
 ALTER TABLE `t_gacha_loot_table`
   ADD CONSTRAINT `t_gacha_loot_table_ibfk_1` FOREIGN KEY (`gacha_id`) REFERENCES `t_gacha` (`gacha_id`),
   ADD CONSTRAINT `t_gacha_loot_table_ibfk_2` FOREIGN KEY (`gacha_item_id`) REFERENCES `t_gacha_item` (`gacha_item_id`);
+
+--
+-- Constraints for table `t_ksatriya_fragment`
+--
+ALTER TABLE `t_ksatriya_fragment`
+  ADD CONSTRAINT `t_ksatriya_fragment_ibfk_1` FOREIGN KEY (`ksatriya_id`) REFERENCES `t_ksatriya` (`ksatriya_id`);
+
+--
+-- Constraints for table `t_ksatriya_skin`
+--
+ALTER TABLE `t_ksatriya_skin`
+  ADD CONSTRAINT `t_ksatriya_skin_ibfk_1` FOREIGN KEY (`ksatriya_id`) REFERENCES `t_ksatriya` (`ksatriya_id`);
+
+--
+-- Constraints for table `t_ksatriya_skin_fragment`
+--
+ALTER TABLE `t_ksatriya_skin_fragment`
+  ADD CONSTRAINT `t_ksatriya_skin_fragment_ibfk_1` FOREIGN KEY (`ksatriya_skin_id`) REFERENCES `t_ksatriya_skin` (`ksatriya_skin_id`);
 
 --
 -- Constraints for table `t_lotto_feature`
